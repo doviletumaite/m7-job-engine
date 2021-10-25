@@ -1,36 +1,61 @@
-import React from 'react'
-import { Container, Row, Col } from 'react-bootstrap'
-import Job from './Job'
-import uniqid from 'uniqid'
+import React from "react";
+import { Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { Star, StarFill } from "react-bootstrap-icons";
+import { addToFav, removeFromFav } from "../store/actions";
+import { connect } from "react-redux";
 
-export default class CompanySearchResults extends React.Component {
+const mapStateToProps = (s) => s;
 
-    state = {
-        jobs: []
-    }
+const mapDispatchToProps = (dispatch) => ({
+  addToFavourites: (company) => dispatch(addToFav(company)),
+  removeFromFavourites: (company) => dispatch(removeFromFav(company))
+});
 
-    componentDidMount() {
-        this.getJobs()
-    }
+function JobResult({
+  data,
+  favourites,
+  addToFavourites,
+  removeFromFavourites
+}) {
+  const isFav = favourites.elements.includes(data.company_name);
+  console.log(isFav, favourites);
+  const toggleFavourite = () => {
+    isFav
+      ? removeFromFavourites(data.company_name)
+      : addToFavourites(data.company_name);
+  };
 
-    baseEndpoint = 'https://strive-jobs-api.herokuapp.com/jobs?company='
-
-    getJobs = async () => {
-        const response = await fetch(this.baseEndpoint + this.props.match.params.companyName)
-        const { data } = await response.json()
-
-        this.setState({ jobs: data })
-    }
-
-    render() {
-        return <Container>
-            <Row>
-                <Col>
-                    {
-                        this.state.jobs.map(jobData => <Job key={uniqid()} data={jobData} />)
-                    }
-                </Col>
-            </Row>
-        </Container>
-    }
+  return (
+    <Row
+      className="mx-0 mt-3 p-3"
+      style={{ border: "1px solid #00000033", borderRadius: 4 }}
+    >
+      <Col xs={3} className="d-flex">
+        {isFav ? (
+          <StarFill
+            color="gold"
+            size={16}
+            className="me-4 my-auto"
+            onClick={toggleFavourite}
+          />
+        ) : (
+          <Star
+            color="gold"
+            size={16}
+            className="me-4 my-auto"
+            onClick={toggleFavourite}
+          />
+        )}
+        <Link to={`/${data.company_name}`}>{data.company_name}</Link>
+      </Col>
+      <Col xs={9}>
+        <Link to={{ pathname: data.url }} target="_blank">
+          {data.title}
+        </Link>
+      </Col>
+    </Row>
+  );
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(JobResult);

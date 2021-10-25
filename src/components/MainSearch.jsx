@@ -1,7 +1,7 @@
-import React from 'react'
-import { Container, Row, Col, Form } from 'react-bootstrap'
-import Job from './Job'
-import uniqid from 'uniqid'
+import React from "react";
+import { Container, Row, Col, Form } from "react-bootstrap";
+import JobResult from "./JobResult";
+import uniqid from "uniqid";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { fetchJobs } from "../store/actions";
@@ -11,7 +11,7 @@ const mapDispatchToProps = (dispatch) => ({
     fetchJobs: (baseEndpoint, query) => dispatch(fetchJobs(baseEndpoint, query)),
   });
 
-export default class MainSearch extends React.Component {
+ class MainSearch extends React.Component {
 
     state = {
         query: '',
@@ -25,18 +25,18 @@ export default class MainSearch extends React.Component {
         this.setState({ query: e.target.value })
     }
      
-     getJobs = async () => {
-      try {
-         const dataJobs =  await fetch(this.baseEndpoint+ '&limit=20')
-        const response = dataJobs.json()
-        if (response.ok){
-         const {arrayOfJobs} = response.data
-         this.setState({ jobs: arrayOfJobs })
-         console.log("arrayOfJobs",arrayOfJobs)
-      } } catch (error) {
-          console.log(error)
-      }
-    }
+    //  getJobs = async () => {
+    //   try {
+    //      const dataJobs =  await fetch(this.baseEndpoint+ '&limit=20')
+    //     const response = dataJobs.json()
+    //     if (response.ok){
+    //      const {arrayOfJobs} = response.data
+    //      this.setState({ jobs: arrayOfJobs })
+    //      console.log("arrayOfJobs",arrayOfJobs)
+    //   } } catch (error) {
+    //       console.log(error)
+    //   }
+    // }
    
    
 
@@ -57,16 +57,19 @@ export default class MainSearch extends React.Component {
         this.props.fetchJobs(this.baseEndpoint, this.state.query);
       };
 
- componentDidMount = () =>{
-     console.log()
-     this.getJobs()
-    }
+//  componentDidMount = () =>{
+//      console.log()
+//      this.getJobs()
+//     }
     render() {
         return (
             <Container>
                 <Row>
                     <Col xs={10} className='mx-auto my-3'>
                         <h1>Remote Jobs Search</h1>
+                        <Link to="/favourites" className="btn btn-primary">
+              Favourites
+            </Link>
                     </Col>
                     <Col xs={10} className='mx-auto'>
                         <Form onSubmit={this.handleSubmit}>
@@ -74,12 +77,13 @@ export default class MainSearch extends React.Component {
                         </Form>
                     </Col>
                     <Col xs={10} className='mx-auto mb-5'>
-                        {
-                            this.state.jobs.map(jobData => <Job key={uniqid()} data={jobData} />)
-                        }
+                    {this.props.jobs.elements.map((jobData) => (
+              <JobResult key={uniqid()} data={jobData} />
+            ))}
                     </Col>
                 </Row>
             </Container>
         )
     }
 }
+export default connect((s) => s, mapDispatchToProps)(MainSearch);

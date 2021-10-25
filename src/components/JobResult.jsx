@@ -15,7 +15,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 function JobResult({ data, favourites, addToFavourites, removeFromFavourites }) {
 
-    const isFav = favourites.includes(data.company_name)
+    const isFav = favourites.elements.includes(data.company_name)
     console.log(isFav, favourites)
     const toggleFavourite = () => {
         isFav 
