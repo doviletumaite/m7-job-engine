@@ -27,7 +27,7 @@ export default class CompanySearchResults extends React.Component {
             <Row>
                 <Col>
                     {
-                        this.state.jobs.map(jobData => <Job  data={jobData} />)
+                        this.state.jobs.map(jobData => <Job key={uniqid()} data={jobData} />)
                     }
                 </Col>
             </Row>
