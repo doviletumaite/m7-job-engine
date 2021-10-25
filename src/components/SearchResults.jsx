@@ -3,27 +3,27 @@ import { Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Star, StarFill } from "react-bootstrap-icons";
 import { addToFav, removeFromFav } from "../store/actions";
-import { connect } from "react-redux";
+import { connect, useSelector, useDispatch } from "react-redux";
 
-const mapStateToProps = (s) => s;
+// const mapStateToProps = (s) => s;
 
-const mapDispatchToProps = (dispatch) => ({
-  addToFavourites: (company) => dispatch(addToFav(company)),
-  removeFromFavourites: (company) => dispatch(removeFromFav(company))
-});
+// const mapDispatchToProps = (dispatch) => ({
+//   addToFavourites: (company) => dispatch(addToFav(company)),
+//   removeFromFavourites: (company) => dispatch(removeFromFav(company))
+// });
 
-function JobResult({
-  data,
-  favourites,
-  addToFavourites,
-  removeFromFavourites
-}) {
-  const isFav = favourites.elements.includes(data.company_name);
+const JobResult = ({jobData}) => {
+
+  const  favourites = useSelector(state => state.favourites.elements)
+   const addToFavourites = useDispatch()
+   const removeFromFavourites = useDispatch()
+   console.log("dataaaa",jobData)
+  const isFav = favourites.includes(jobData.company_name);
   console.log(isFav, favourites);
   const toggleFavourite = () => {
     isFav
-      ? removeFromFavourites(data.company_name)
-      : addToFavourites(data.company_name);
+      ? removeFromFavourites()
+      : addToFavourites();
   };
 
   return (
@@ -47,15 +47,15 @@ function JobResult({
             onClick={toggleFavourite}
           />
         )}
-        <Link to={`/${data.company_name}`}>{data.company_name}</Link>
+        <Link to={`/${jobData.company_name}`}>{jobData.company_name}</Link>
       </Col>
       <Col xs={9}>
-        <Link to={{ pathname: data.url }} target="_blank">
-          {data.title}
+        <Link to={{ pathname: jobData.url }} target="_blank">
+          {jobData.title}
         </Link>
       </Col>
     </Row>
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(JobResult);
+export default JobResult;
